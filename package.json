@@ -2,15 +2,25 @@
   "name": "pool",
   "version": "1.0.0",
   "description": "Ranking visualizations for the Corvallis pool league.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d lib",
+    "start": "webpack-dev-server"
   },
   "author": "Bryce Frank",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
+    "babel-loader": "^8.0.6",
     "d3": "^5.14.2",
     "d3-node": "^2.2.1",
-    "read-excel-file": "^4.0.5"
-  }
+    "html-webpack-plugin": "^3.2.0",
+    "read-excel-file": "^4.0.5",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "xlsx": "^0.15.3"
+  },
+  "devDependencies": {}
 }
