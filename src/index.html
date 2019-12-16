@@ -1,5 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+  <style>
+    div.tooltip {
+    position: absolute;			
+    text-align: center;			
+    width: 60px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;		
+    }
+
+    .label {
+      background: white;
+    }
+
+  </style>
 <head>
   <meta charset="UTF-8">
   <title>D3 Webpack Babel</title>
@@ -7,5 +26,13 @@
 <body>
   <div id="line_plot">
   </div>
+  <select id="teams" size="7" multiple>
+  <option value="H1">H1</option>
+  <option value="H2">H2</option>
+  <option value="P1">P1</option>
+  <option value="P2">P2</option>
+  <option value="T1">T1</option>
+  <option value="T2">T2</option>
+  </select>
 </body>
 </html>

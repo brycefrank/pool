@@ -1,5 +1,6 @@
 var XLSX = require('xlsx');
 var plot = require('./plot');
+var d3 = require('d3');
 
 url = '../data/data.xlsx';
 var req = new XMLHttpRequest();
@@ -33,7 +34,7 @@ function get_cumulative_wins(wins, current_week) {
     return(cumulative_wins)
 }
 
-function get_player_summary(rows) {
+function get_player_summary(rows, subset_team=["H1"]) {
     player_scores = [];
 
     // TODO detect this automatically somehow?
@@ -41,27 +42,54 @@ function get_player_summary(rows) {
     for (var i = 0; i<rows.length; i++) {
         row = rows[i];
         name = row["__EMPTY_1"];
+        num_games = row["Games"]
+        team = row["__EMPTY"]
 
-        if((name!="undefined") && (name!="Forfeits")) {
+        if((name!="undefined") && (name!="Forfeits") && (num_games > 20) && (subset_team.includes(team))) {
             wins = get_player_wins(row, current_week);
-            player_scores[j] = {}
-            player_scores[j]["name"] = name
-            player_scores[j]["record"] = wins
-            player_scores[j]["cumulative_wins"] = get_cumulative_wins(wins, current_week)
+            player_scores[j] = {
+                "name": name,
+                "team": team,
+                "num_games": num_games,
+                "record": wins,
+                "cumulative_wins": get_cumulative_wins(wins, current_week)
+            }
             j += 1;
         }
     }
     return(player_scores);
 }
 
+function parse_selection() {
+    selected = []
+    d3.selectAll('option')
+        .each(function(d){
+            cb = d3.select(this);
+            if(cb.property("selected")) {
+                selected.push(cb.property("value"))
+            }
+        })
+    return(selected)
+}
+
+function plot_subset() {
+    team_selection = parse_selection()
+    cumulative_plot.erase_lines()
+    player_summary = get_player_summary(rows, team = team_selection)
+    cumulative_plot.draw_lines(player_summary)
+}
 
 req.onload = function(e) {
   var data = new Uint8Array(req.response);
   var workbook = XLSX.read(data, {type:"array"});
 
   rows = XLSX.utils.sheet_to_json(workbook.Sheets["Sheet1"]);
+
+  // Plot initial
   player_summary = get_player_summary(rows);
-  plot.plot_cumulative_wins(player_summary, current_week);
+  cumulative_plot = new plot.CumulativeWins(player_summary, current_week);
+  cumulative_plot.draw_lines(player_summary)
+  d3.select("#teams").on("change", plot_subset);
 }
 
 req.send();
